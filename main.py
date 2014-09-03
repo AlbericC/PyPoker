@@ -91,22 +91,5 @@ the hands that won the most.
         for i in has_won[:10]:
             print("\t {:20} {}".format(i[0], i[1]))
 
-##    # Class mangling - usually a bad idea
-##    p = CardPack()
-##    a = p.take(5)
-##    # A is a CardPack, because CardPack.take returns a CardPack() instance
-##    a.__class__ = PokerHand
-##    # Changed its nature to be a PokerHand instance instead
-##    # in this case, A gained PokerHand class methods in the process
-##    a.rank()
-##    # This creates A._rank, the memory of the result of A.rank()
-##    a.__class__ = CardPack
-##    # Back to a basic Card pack instance
-##    a >> p
-##    # All cards are destroyed
-##    a.__class__ = PokerHand
-##    # This instance of PokerHand has wrong _rank attribute.
-
-
 if __name__ == '__main__':
     main()
