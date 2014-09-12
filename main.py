@@ -63,7 +63,7 @@ winner remains: this is what remains at the end of this face-to-face tournament.
 """)
     pack = CardPack()
     # noinspection PyCallByClass
-    a, b = PokerHand.fromCardPack(pack), PokerHand.fromCardPack(pack)
+    a, b = PokerHand.from_pack(pack), PokerHand.from_pack(pack)
     for game in range(1000):
         a, b = min(a, b), max(a, b)
         pack.put(a)
@@ -81,7 +81,7 @@ the hands that won the most.
         has_won = dict()
         table = PokerTable(player)
         for donne in range(1000):
-            w = table.whatWins()
+            w = table.what_wins()
             if w not in has_won:
                 has_won[w] = 1
             else:

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Name:        Poker.py
 # Purpose:     defines basic classes for modelling poker
 #
@@ -11,6 +11,7 @@
 #-------------------------------------------------------------------------------
 
 from Cards import CardPack, CardTable
+
 
 class PokerHand(CardPack):
     """Specific subclass for Poker Hands (5 cards)
@@ -26,15 +27,15 @@ class PokerHand(CardPack):
     Royal Flush: Ten, Jack, Queen, King, Ace, in same suit.
     """
 
-    def fromCardPack(pack):
+    def from_pack(pack):
         """Pick 5 cards in the pack and create a PokerHand"""
         return PokerHand(pack.take(5))
 
-    def fromCards(cardslist):
+    def from_cards(cardslist):
         """Make a PokerHand from the given cards"""
-        return PokerHand(CardPack(cardsList = cardslist))
+        return PokerHand(CardPack(cardsList=cardslist))
 
-    def __init__( self, pack : CardPack ):
+    def __init__(self, pack: CardPack):
         super().__init__()
         self.cards = pack.cards
         self.rank()
@@ -60,35 +61,35 @@ class PokerHand(CardPack):
             qualifiers[self._rank[0]]
         )
 
-    def __getattr__( self, name ):
+    def __getattr__(self, name):
         if name == '_rank':
             return self.rank()
         else:
             raise AttributeError("Attribute {} does not compute".format(name))
 
-    def put(self,other):
+    def put(self, other):
         super().put(other)
         # content has changed, rank is obsolete
         del self._rank
 
-    def __gt__( self, other ):
+    def __gt__(self, other):
         me = self._rank
         him = other._rank
-        for soup in range( min(len(me), len(him) ) ):
+        for soup in range(min(len(me), len(him))):
             if me[soup] != him[soup]:
                 return me > him
 
-    def whathand(self):
-        return [ 'High Card',
-                 'One Pair',
-                 'Two Pairs',
-                 'Three of a Kind',
-                 'Straight',
-                 'Flush',
-                 'Full House',
-                 'Four of a Kind',
-                 'Straight Flush',
-                 'Royal Flush'][ self._rank[0] ]
+    def what_hand(self):
+        return ['High Card',
+                'One Pair',
+                'Two Pairs',
+                'Three of a Kind',
+                'Straight',
+                'Flush',
+                'Full House',
+                'Four of a Kind',
+                'Straight Flush',
+                'Royal Flush'][self._rank[0]]
 
     def _empty(self):
         super()._empty()
@@ -99,60 +100,55 @@ class PokerHand(CardPack):
         -the index of the type of hand (high card == 0, Royal Flush == 9)
         -the values of the cards, sorted by numer of identical cards
                 then by value (inverse)"""
-        scoreList = []
-        SuitsDic = { A[1]:sorted([ C[0]
-                                for C in self.cards if C[1]==A[1]
-                                ]
-                               )
-                    for A in self.cards }
-        ValueDic = { C[0]:sorted(
-                                B[1] for B in self.cards if B[0]==C[0]
-                                )
+        scorelist = []
+        suitsdic = {A[1]: sorted([C[0]
+                                  for C in self.cards if C[1] == A[1]
+        ]
+        )
+                    for A in self.cards}
+        valuedic = {C[0]: sorted(
+            B[1] for B in self.cards if B[0] == C[0]
+        )
                     for C in self.cards
-                    }
+        }
         # BEGIN TESTS
         if len(self.cards) != 5:
-            scoreList = [0]
-        elif sorted(self.cards) in list( sorted( [ "{}{}".format(carte,couleur)
-                                        for carte in "TJQKA" ]
-                                        )
-                              for couleur in "CHSD"
-                              ):
-            scoreList.append(9) #Royal Flush !
-        elif any([ sorted("23456789TJQKA"[i:i+5]) in SuitsDic.values()
-                 for i in range(13-5)]
-                ):
-            scoreList.append(8) # Straight Flush
-        elif 4 in { len(A) for A in ValueDic.values() }:
-            scoreList.append(7) # four of a kind
-        elif { len(A) for A in ValueDic.values() } == {3,2} :
-            scoreList.append(6) # Full House
-        elif len( { A[1] for A in self.cards } ) == 1:
-            scoreList.append(5) # Flush
-        elif any([ sorted("23456789TJQKA"[i:i+5]) in list(ValueDic.keys())
-                for i in range(13-5)]
-                ):
-            scoreList.append(4) # Straight
-        elif 3 in { len(A) for A in ValueDic.values() }:
-            scoreList.append(3) # Brelan !
-        elif len( ValueDic ) == 3 :
-            scoreList.append(2) # Two Pairs
-        elif 2 in { len(A) for A in ValueDic.values() }:
-            scoreList.append(1) # one Pair
-        else :
-            scoreList.append(0) # High Card, sucker !
+            scorelist = [0]
+        elif sorted(self.cards) in list(sorted(["{}{}".format(carte, couleur)
+                                                for carte in "TJQKA"]) for couleur in "CHSD"):
+            scorelist.append(9)  # Royal Flush !
+        elif any([sorted("23456789TJQKA"[i:i + 5]) in suitsdic.values()
+                  for i in range(13 - 5)]):
+            scorelist.append(8)  # Straight Flush
+        elif 4 in {len(A) for A in valuedic.values()}:
+            scorelist.append(7)  # four of a kind
+        elif {len(A) for A in valuedic.values()} == {3, 2}:
+            scorelist.append(6)  # Full House
+        elif len({A[1] for A in self.cards}) == 1:
+            scorelist.append(5)  # Flush
+        elif any([sorted("23456789TJQKA"[i:i + 5]) in list(valuedic.keys())
+                  for i in range(13 - 5)]):
+            scorelist.append(4)  # Straight
+        elif 3 in {len(A) for A in valuedic.values()}:
+            scorelist.append(3)  # Brelan !
+        elif len(valuedic) == 3:
+            scorelist.append(2)  # Two Pairs
+        elif 2 in {len(A) for A in valuedic.values()}:
+            scorelist.append(1)  # one Pair
+        else:
+            scorelist.append(0)  # High Card, sucker !
         # END TYPE OF HAND TESTS
-        PokerCardValue = lambda Card : "23456789TJQKA".index(Card)
-        cardsnum = { PokerCardValue(c):len(ValueDic[c]) for c in ValueDic}
-        for num_cards in range (4,0,-1):
+        pokercardvalue = lambda card: "23456789TJQKA".index(card)
+        cardsnum = {pokercardvalue(c): len(valuedic[c]) for c in valuedic}
+        for num_cards in range(4, 0, -1):
             templist = []
             for i in cardsnum:
                 if cardsnum[i] == num_cards:
                     templist.append(i)
-            scoreList += sorted(templist,reverse=True)
-        self._rank = scoreList
-        return scoreList
-
+            scorelist += sorted(templist, reverse=True)
+        # noinspection PyAttributeOutsideInit
+        self._rank = scorelist
+        return scorelist
 
 
 class PokerTable(CardTable):
@@ -163,33 +159,34 @@ class PokerTable(CardTable):
         self.Pack.shuffle()
         self.deal()
 
-    def getAll(self):
+    def get_all_players_cards(self):
         """retrieve all players cards"""
         for p in self.players:
             self.Pack.put(p)
 
     def deal(self):
         """deal 5 (five) cards per player (Poker, dude!)"""
-        if len( self.Pack.cards ) < 52:
-            self.getAll()
+        if len(self.Pack.cards) < 52:
+            self.get_all_players_cards()
         self.Pack.shuffle()
-        self.players = list( map( PokerHand.fromCardPack ,
-                                  self.n_players*[self.Pack]
-                                  ) )
+        # noinspection PyAttributeOutsideInit
+        self.players = list(map(PokerHand.from_pack,
+                                self.n_players * [self.Pack]
+        ))
 
-    def whatWins(self):
+    def what_wins(self):
         """returns the type of hand that wins now"""
         winner = max(self.players)
-        descript = winner.rank() # funky format list
+        descript = winner.rank()  # funky format list
         qualifs = ['High Card',
-        'One Pair',
-        'Two Pairs',
-        'Three of a Kind',
-        'Straight',
-        'Flush',
-        'Full House',
-        'Four of a Kind',
-        'Straight Flush',
-        'Royal Flush']
+                   'One Pair',
+                   'Two Pairs',
+                   'Three of a Kind',
+                   'Straight',
+                   'Flush',
+                   'Full House',
+                   'Four of a Kind',
+                   'Straight Flush',
+                   'Royal Flush']
         cards = "23456789TJQKA"
-        return "{} - {}".format( qualifs[descript[0]], cards[descript[1]] )
+        return "{} - {}".format(qualifs[descript[0]], cards[descript[1]])

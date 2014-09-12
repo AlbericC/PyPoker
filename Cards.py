@@ -12,6 +12,7 @@
 
 import random
 
+
 def verbal(some_class):
     """intended as a class decorator allowing to list all attributes and where
     they come from"""
